@@ -11,20 +11,31 @@ class Planta:
         self.y = y
         self.color = (0.0, 0.8, 0.0)  # Verde
         self.projeteis = []  # Lista de projéteis disparados
+        self.viva = True
 
     def desenhar(self):
         """Desenha a planta como um retângulo."""
-        glColor3f(*self.color)
-        glBegin(GL_QUADS)
-        glVertex2f(self.x, self.y)
-        glVertex2f(self.x + 0.1, self.y)
-        glVertex2f(self.x + 0.1, self.y + 0.2)
-        glVertex2f(self.x, self.y + 0.2)
-        glEnd()
+        if self.viva:
+            vetor=[
+                [0.0 ,0.0 ],
+                [0.1 , 0.0],
+                [0.1 , 0.1],
+                [0.0 , 0.1],
+                ] 
+            glColor3f(*self.color)
+            glPushMatrix()
+            glTranslatef(self.x, self.y,0)
+            glBegin(GL_QUADS)
+            
+            for i in vetor:
+                glVertex2f(i[0],i[1])
 
+            glEnd()
+            glPopMatrix()
+        
     def disparar(self):
         """Dispara um projétil."""
-        self.projeteis.append(Projeteis(self.x + 0.1, self.y + 0.1))
+        self.projeteis.append(Projeteis(self.x + 0.1, self.y + 0.05))
 
     def atualizar_projeteis(self):
         """Atualiza e desenha os projéteis."""
@@ -33,7 +44,7 @@ class Planta:
             proj.desenhar()
         # Remove projéteis que saíram da tela
         self.projeteis = [proj for proj in self.projeteis if proj.x < 1.0]
-
+        
 
 class Projeteis:
     def __init__(self, x, y):
@@ -45,14 +56,21 @@ class Projeteis:
 
     def desenhar(self):
         """Desenha o projétil."""
+        vetor=[
+            [0    , - 0.01],
+            [0.02 , - 0.01],
+            [0.02 , 0.01],
+            [0    , 0.01],
+        ]
+        glPushMatrix()
+        glTranslatef(self.x, self.y,0)
         glColor3f(*self.color)
         glBegin(GL_QUADS)
-        glVertex2f(self.x, self.y - 0.01)
-        glVertex2f(self.x + 0.02, self.y - 0.01)
-        glVertex2f(self.x + 0.02, self.y + 0.01)
-        glVertex2f(self.x, self.y + 0.01)
+        for i in vetor:
+            glVertex2f(i[0] , i[1])
+        
         glEnd()
-
+        glPopMatrix()
     def mover(self):
         """Move o projétil para a direita."""
         self.x += self.velocidade
@@ -66,30 +84,48 @@ class Zumbi:
         self.color = (0.8, 0.0, 0.0)  # Vermelho
         self.velocidade = 0.0005
         self.vivo = True
+        self.dano_sofrido = 0
 
     def desenhar(self):
         """Desenha o zumbi como um retângulo."""
         if self.vivo:
+            vetor = [
+                [ 0 , 0 ],
+                [0.1, 0 ],
+                [0.1,0.2],
+                [ 0 ,0.2],
+            ]
+            glPushMatrix()
+            glTranslatef(self.x, self.y,0)
             glColor3f(*self.color)
             glBegin(GL_QUADS)
-            glVertex2f(self.x, self.y)
-            glVertex2f(self.x + 0.1, self.y)
-            glVertex2f(self.x + 0.1, self.y + 0.2)
-            glVertex2f(self.x, self.y + 0.2)
+            for i in vetor:
+                glVertex2f(i[0],i[1])
+                
             glEnd()
+            glPopMatrix()
 
     def mover(self):
         """Move o zumbi para a esquerda."""
         if self.vivo:
             self.x -= self.velocidade
 
-    def verificar_colisao(self, projeteis):
+    def verificar_colisao_Projeteis(self, projeteis):
         """Verifica se algum projétil colidiu com o zumbi."""
-        for proj in projeteis:
-            if self.x < proj.x < self.x + 0.1 and self.y < proj.y < self.y + 0.2:
-                self.vivo = False
-                projeteis.remove(proj)
-                break
+        if self.vivo==True:
+            for proj in projeteis:
+                if self.x < proj.x < self.x + 0.1 and self.y < proj.y < self.y + 0.2:
+                    self.dano_sofrido = self.dano_sofrido + 1
+                    if self.dano_sofrido == 5:
+                        self.vivo = False
+                        projeteis.remove(proj)
+                        break
+
+    def verificar_colisao_Planta(self, Planta):
+        pass
+
+    def verificar_colisao_casa(self):
+        pass
             
     def get_x(self):
         return self.x
@@ -132,7 +168,7 @@ def loop_principal(janela):
         # Atualiza e desenha os zumbis
         for zumbi in zumbis:
             zumbi.mover()
-            zumbi.verificar_colisao(planta.projeteis)
+            zumbi.verificar_colisao_Projeteis(planta.projeteis)
             zumbi.desenhar()
 
         # Faz a planta disparar a cada 1 segundo
