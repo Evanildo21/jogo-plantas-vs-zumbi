@@ -4,6 +4,38 @@ import random
 import time
 
 
+class girassol:
+    def __init__(self, x, y):
+        """Inicializa uma planta na posição dada."""
+        self.x = x
+        self.y = y
+        self.color = (0.0, 0.8, 0.0)  # Verde
+        self.viva = True
+    def p():
+        GLUT_LEFT_BUTTON
+        
+
+    def desenhar(self):
+        """Desenha a planta como um retângulo."""
+        if self.viva:
+            vetor=[
+                [0.0 ,0.0 ],
+                [0.1 , 0.0],
+                [0.1 , 0.1],
+                [0.0 , 0.1],
+                ] 
+            glColor3f(*self.color)
+            glPushMatrix()
+            glTranslatef(self.x, self.y,0)
+            glBegin(GL_QUADS)
+            
+            for i in vetor:
+                glVertex2f(i[0],i[1])
+
+            glEnd()
+            glPopMatrix()
+        
+
 class Planta:
     def __init__(self, x, y):
         """Inicializa uma planta na posição dada."""
@@ -130,9 +162,22 @@ class Zumbi:
     def get_x(self):
         return self.x
     
-     
 
-
+plantas=[]    
+# Função de callback para eventos de clique do mouse
+def mouse_button_callback(window, button, action, mods):
+    global plantas
+    if action == glfw.PRESS:  # Verifica se o botão foi pressionado
+        xpos, ypos = glfw.get_cursor_pos(window)  # Obtém a posição do mouse
+        
+        if button == glfw.MOUSE_BUTTON_LEFT:
+            print(f"Botão esquerdo clicado: X = {xpos:.2f}, Y = {ypos:.2f}")
+            print(len(plantas))
+            plantas.append(Planta(xpos/1000,ypos/1000))
+        elif button == glfw.MOUSE_BUTTON_RIGHT:
+            print(f"Botão direito clicado: X = {xpos:.2f}, Y = {ypos:.2f}")
+        elif button == glfw.MOUSE_BUTTON_MIDDLE:
+            print(f"Botão do meio clicado: X = {xpos:.2f}, Y = {ypos:.2f}")
 
 def inicializar_janela():
     """Inicializa a janela usando GLFW."""
@@ -154,28 +199,38 @@ def inicializar_janela():
 
 def loop_principal(janela):
     """Executa o loop principal do jogo."""
-    planta = Planta(0.1, 0.4)
+    #planta = Planta(0.1, 0.4)
+    global plantas
     zumbis = [Zumbi(0.9, random.uniform(0.1, 0.7)) for _ in range(3)]
     tempo_de_criar_zumbi = tempo_anterior = time.time()
+
+    # Define o callback para eventos de clique do mouse
+    glfw.set_mouse_button_callback(janela, mouse_button_callback)
 
     while not glfw.window_should_close(janela):
         glClear(GL_COLOR_BUFFER_BIT)
 
         # Atualiza e desenha a planta e seus projéteis
-        planta.desenhar()
-        planta.atualizar_projeteis()
+        for planta in plantas:
+            planta.desenhar()
+            planta.atualizar_projeteis()
 
         # Atualiza e desenha os zumbis
         for zumbi in zumbis:
             zumbi.mover()
-            zumbi.verificar_colisao_Projeteis(planta.projeteis)
+            for planta in plantas:
+                zumbi.verificar_colisao_Projeteis(planta.projeteis)
+
             zumbi.desenhar()
 
         # Faz a planta disparar a cada 1 segundo
         tempo_atual = time.time()
         
         if tempo_atual - tempo_anterior > 1:
-            planta.disparar()
+            for planta in plantas:
+                planta.disparar()
+
+
             tempo_anterior = tempo_atual
 
         if tempo_atual - tempo_de_criar_zumbi > 6:
