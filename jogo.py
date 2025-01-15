@@ -2,6 +2,8 @@ import glfw
 from OpenGL.GL import *
 import random
 import time
+from plantas import *
+from zumbi import *
 
 class seleção:
     def __init__(self,x,y):
@@ -76,164 +78,10 @@ class gramado:
 
 
 
-class girassol:
-    def __init__(self, x, y):
-        """Inicializa uma planta na posição dada."""
-        self.x = x
-        self.y = y
-        self.color = (0.0, 0.8, 0.0)  # Verde
-        self.viva = True
-    def p():
-        GLUT_LEFT_BUTTON
         
 
-    def desenhar(self):
-        """Desenha a planta como um retângulo."""
-        if self.viva:
-            vetor=[
-                [0.0 ,0.0 ],
-                [0.1 , 0.0],
-                [0.1 , 0.1],
-                [0.0 , 0.1],
-                ] 
-            glColor3f(*self.color)
-            glPushMatrix()
-            glTranslatef(self.x, self.y,0)
-            glBegin(GL_QUADS)
-            
-            for i in vetor:
-                glVertex2f(i[0],i[1])
-
-            glEnd()
-            glPopMatrix()
-        
-
-class Planta:
-    def __init__(self, x, y):
-        """Inicializa uma planta na posição dada."""
-        self.x = x
-        self.y = y
-        self.color = (0.0, 0.8, 0.0)  # Verde
-        self.projeteis = []  # Lista de projéteis disparados
-        self.viva = True
-
-    def desenhar(self):
-        """Desenha a planta como um retângulo."""
-        if self.viva:
-            vetor=[
-                [0.0 ,0.0 ],
-                [0.6 , 0.0],
-                [0.6 , 0.5],
-                [0.0 , 0.5],
-                ] 
-            glColor3f(*self.color)
-            glPushMatrix()
-            glTranslatef(self.x, self.y,0)
-            glBegin(GL_QUADS)
-            
-            for i in vetor:
-                glVertex2f(i[0],i[1])
-
-            glEnd()
-            glPopMatrix()
-        
-    def disparar(self):
-        """Dispara um projétil."""
-        self.projeteis.append(Projeteis(self.x+1 , self.y+1 ))
-
-    def atualizar_projeteis(self):
-        """Atualiza e desenha os projéteis."""
-        for proj in self.projeteis:
-            proj.mover()
-            proj.desenhar()
-        # Remove projéteis que saíram da tela
-        self.projeteis = [proj for proj in self.projeteis if proj.x < 1.0]
-        
-
-class Projeteis:
-    def __init__(self, x, y):
-        """Inicializa o projétil."""
-        self.x = x
-        self.y = y
-        self.velocidade = 0.02
-        self.color = (1.0, 1.0, 0.0)  # Amarelo
-
-    def desenhar(self):
-        """Desenha o projétil."""
-        vetor=[
-            [0    , - 0.1],
-            [0.2 , - 0.1],
-            [0.2 , 0.1],
-            [0    , 0.1],
-        ]
-        glPushMatrix()
-        glTranslatef(self.x, self.y,0)
-        glColor3f(*self.color)
-        glBegin(GL_QUADS)
-        for i in vetor:
-            glVertex2f(i[0] , i[1])
-        
-        glEnd()
-        glPopMatrix()
-    def mover(self):
-        """Move o projétil para a direita."""
-        self.x += self.velocidade
 
 
-class Zumbi:
-    def __init__(self, x, y):
-        """Inicializa um zumbi na posição dada."""
-        self.x = x
-        self.y = y
-        self.color = (0.8, 0.0, 0.0)  # Vermelho
-        self.velocidade = 0.005
-        self.vivo = True
-        self.dano_sofrido = 0
-
-    def desenhar(self):
-        """Desenha o zumbi como um retângulo."""
-        if self.vivo:
-            vetor = [
-                [ 0 , 0 ],
-                [1, 0 ],
-                [1,2],
-                [ 0 ,2],
-            ]
-            glPushMatrix()
-            glTranslatef(self.x, self.y,0)
-            glColor3f(*self.color)
-            glBegin(GL_QUADS)
-            for i in vetor:
-                glVertex2f(i[0],i[1])
-                
-            glEnd()
-            glPopMatrix()
-
-    def mover(self):
-        """Move o zumbi para a esquerda."""
-        if self.vivo:
-            self.x -= self.velocidade
-
-    def verificar_colisao_Projeteis(self, projeteis):
-        """Verifica se algum projétil colidiu com o zumbi."""
-        if self.vivo==True:
-            for proj in projeteis:
-                if self.x < proj.x < self.x + 0.1 and self.y < proj.y < self.y + 0.2:
-                    self.dano_sofrido = self.dano_sofrido + 1
-                    if self.dano_sofrido == 5:
-                        self.vivo = False
-                        projeteis.remove(proj)
-                        break
-
-    def verificar_colisao_Planta(self, Planta):
-        pass
-
-    def verificar_colisao_casa(self):
-        pass
-            
-    def get_x(self):
-        return self.x
-    
 
 plantas=[]    
 
@@ -304,9 +152,10 @@ def loop_principal(janela):
     """Executa o loop principal do jogo."""
     #planta = Planta(0.1, 0.4)
     global plantas
-    zumbis = [Zumbi(12, random.randrange(1,5)) for _ in range(1)]
+    zumbis = [Zumbi(12,random.randrange(1,5 ))]
     tempo_de_criar_zumbi = tempo_anterior = time.time()
 
+   
 
     while not glfw.window_should_close(janela):
         glClear(GL_COLOR_BUFFER_BIT)
@@ -354,7 +203,7 @@ def main():
     janela = inicializar_janela()
     if janela: 
         loop_principal(janela)
-
+ 
 
 if __name__ == "__main__":
     main()
