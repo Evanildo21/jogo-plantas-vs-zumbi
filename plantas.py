@@ -63,7 +63,7 @@ class Planta:
             proj.mover()
             proj.desenhar()
         # Remove projéteis que saíram da tela
-        self.projeteis = [proj for proj in self.projeteis if proj.x < 1.0]
+        self.projeteis = [proj for proj in self.projeteis if proj.x < 12]
 
 
 class Projeteis:
@@ -107,31 +107,45 @@ class girassol:
         """Inicializa uma planta na posição dada."""
         self.x = x
         self.y = y
-        self.color = (0.0, 0.8, 0.0)  # Verde
+        self.color = (0.59,0.41,0.30)  # marrom
         self.viva = True
     
     def desenhar(self):
         """Desenha a planta como um retângulo."""
         if self.viva:
             vetor=[
-                [0.0 ,0.0 ],
-                [0.1 , 0.0],
-                [0.1 , 0.1],
-                [0.0 , 0.1],
+                [0,0],
+                [1,0],
+                [1,1],
+                [0,1],
                 ] 
             glColor3f(*self.color)
             glPushMatrix()
             glTranslatef(self.x, self.y,0)
+            glScale(-0.5,0,0)
             glBegin(GL_QUADS)
-            
             for i in vetor:
                 glVertex2f(i[0],i[1])
-
             glEnd()
             glPopMatrix()
 
+           
+    def petala(self):
+        glPushMatrix()
+        segments=50
+        raio=0.5
+        glTranslatef(self.x,self.y+0.8,0)
+        glColor3f(1,1,0)
+        glBegin(GL_TRIANGLE_FAN)
+        glVertex2f(0,0)
+        for i in range(segments+1):
+            angulo = 2 * np.pi * i / segments
+            glVertex2f(0+ np.cos(angulo)*raio,0 + np.sin(angulo) * raio)
+        glEnd()
+        glPopMatrix()
+        
     def desenharSol():
         pass
-    
+
     def gerarsol():
         pass

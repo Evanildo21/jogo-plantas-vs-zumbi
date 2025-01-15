@@ -6,7 +6,7 @@ class Zumbi:
         self.x = x
         self.y = y
         self.color = (0.8, 0.0, 0.0)  # Vermelho
-        self.velocidade = 0.005
+        self.velocidade = 0.05
         self.vivo = True
         self.dano_sofrido = 0
 
@@ -38,7 +38,7 @@ class Zumbi:
         """Verifica se algum projétil colidiu com o zumbi."""
         if self.vivo==True:
             for proj in projeteis:
-                if self.x < proj.x < self.x + 0.1 and self.y < proj.y < self.y + 0.2:
+                if self.x < proj.x < self.x + 1 and self.y < proj.y < self.y +1 :
                     self.dano_sofrido = self.dano_sofrido + 1
                     if self.dano_sofrido == 5:
                         self.vivo = False

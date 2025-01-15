@@ -14,8 +14,8 @@ class seleção:
     def desenha(self):
         vetor=[ [ 0 , 0 ],
                 [1, 0 ],
-                [1,0.8],
-                [ 0 ,0.8,]]
+                [1,1],
+                [ 0 ,1,]]
         glPushMatrix()
         glTranslatef(self.x, self.y,0)
         glColor3f(*self.color)
@@ -41,10 +41,10 @@ class seleção:
                 self.x=self.x+2
         if key == "ParaBaixo":
             if self.y > 2:
-                self.y=self.y-1.6
+                self.y=self.y-2
         if key == "ParaCima":
-            if self.y < 7:
-                self.y=self.y+1.6
+            if self.y < 9:
+                self.y=self.y+2
 
         
 class gramado:
@@ -56,8 +56,8 @@ class gramado:
     def desenha(self):
         vetor=[ [ 0 , 0 ],
                 [1, 0 ],
-                [1,0.8],
-                [ 0 ,0.8,]] 
+                [1,1],
+                [ 0 ,1,]] 
         glPushMatrix()
         glTranslatef(self.x, self.y,0)
         glColor3f(*self.color)
@@ -136,7 +136,7 @@ def cenario():
         for j in range(9):
             gramado1.append(gramado(x,y))
             x=x+2
-        y=y+1.6
+        y=y+2
         x=-10
         
     for i in gramado1:
@@ -152,16 +152,17 @@ def loop_principal(janela):
     """Executa o loop principal do jogo."""
     #planta = Planta(0.1, 0.4)
     global plantas
-    zumbis = [Zumbi(12,random.randrange(1,5 ))]
+    zumbis = [Zumbi(12,3)]
+    posicaoy=[1,3,5,7,9]
     tempo_de_criar_zumbi = tempo_anterior = time.time()
-
+    
    
 
     while not glfw.window_should_close(janela):
         glClear(GL_COLOR_BUFFER_BIT)
         glMatrixMode(GL_PROJECTION)    # modo de matriz: matriz de projeÃ§Ã£o
         glLoadIdentity()               # carregando a matriz identidade
-        glOrtho(-12, 12, 0, 12, -1,1)  # definindo a matriz de projeÃ§Ã£o ortogrÃ¡fica (paralela)
+        glOrtho(-12, 12, -1, 12, -1,1)  # definindo a matriz de projeÃ§Ã£o ortogrÃ¡fica (paralela)
                                    # glOrtho(left, right, bottom, top, near, far)
         cenario()
         
@@ -181,7 +182,7 @@ def loop_principal(janela):
         # Faz a planta disparar a cada 1 segundo
         tempo_atual = time.time()
         
-        if tempo_atual - tempo_anterior > 1:
+        if tempo_atual - tempo_anterior > 3:
             for planta in plantas:
                 planta.disparar()
 
@@ -189,7 +190,8 @@ def loop_principal(janela):
             tempo_anterior = tempo_atual
 
         if tempo_atual - tempo_de_criar_zumbi > 6:
-            zumbis.append(Zumbi(0.9, random.uniform(0.1, 0.7)))
+            x=int(random.uniform(0,4))
+            zumbis.append(Zumbi(12, posicaoy[x]))
             tempo_de_criar_zumbi = tempo_atual
 
         glfw.swap_buffers(janela)
