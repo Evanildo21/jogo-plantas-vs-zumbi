@@ -4,16 +4,43 @@ from OpenGL.GLU import *
 import numpy as np
 
 
-
 #Variáveis da câmera
-camera_pos = np.array([0.0, 0.0, 3])
-camera_front = np.array([0.0, 0.0, -1.0])
+camera_pos = np.array([0, 3, 14])
+camera_front = np.array([0, 0, -1.0])
 camera_up = np.array([0.0, 1.0, 0.0])
-camera_speed = 0.01
+camera_speed = 0.1
 
 keys = {}
 
+rotation_index = False
+
+
+
+
 def camera():
+    global rotation_index
+    vetor=[[0.5, 3.5, 15],
+           [0, 0, -1.0],
+           [0.0, 1.0, 0.0]]
+    c=[x + y for x,y in zip(vetor[0],vetor[1])]
+    if rotation_index == True:
+        d_input()
+    gluLookAt(vetor[0][0],vetor[0][1],vetor[0][2],c[0],c[1],c[2],vetor[2][0],vetor[2][1],vetor[2][2])
+
+
+def d_input():
+    
+    glTranslated(13,1,-13)
+    glRotatef(90,0,1,0)
+    
+    
+
+
+
+
+
+
+def camer():
     global camera_pos, camera_front, camera_up
     glLoadIdentity()
     camera_target = camera_pos + camera_front
@@ -39,23 +66,12 @@ def update_camera_direction():
     ])
     camera_front = direction / np.linalg.norm(direction)
 
+
 def process_input():
-    global camera_pos, camera_front, camera_up, camera_speed,delta_yaw,yaw
+    global rotation_index
     if keys.get(glfw.KEY_W, False):
-        camera_pos += camera_speed * camera_front
-    if keys.get(glfw.KEY_S, False):
-        camera_pos -= camera_speed * camera_front
-    if keys.get(glfw.KEY_A, False):
-        camera_pos -= np.cross(camera_front, camera_up) * camera_speed
-    if keys.get(glfw.KEY_D, False):
-        camera_pos += np.cross(camera_front, camera_up) * camera_speed
-    if keys.get(glfw.KEY_UP,False):
-        camera_pos += camera_up * camera_speed
-    if keys.get(glfw.KEY_DOWN,False):
-        camera_pos -= camera_up * camera_speed
-    if keys.get(glfw.KEY_N):  # Rotação para a esquerda
-        yaw -= delta_yaw
-        update_camera_direction()
-    if keys.get(glfw.KEY_M):  # Rotação para a direita
-        yaw += delta_yaw
-        update_camera_direction()
+        if rotation_index == True:
+            rotation_index = False
+        else:   
+            rotation_index = True
+        

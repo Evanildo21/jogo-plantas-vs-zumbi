@@ -2,7 +2,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import numpy as np
 
-def cube():
+def cube(colors:list):
     vertices = [
         [-0.5, -0.5, -0.5],
         [0.5, -0.5, -0.5],
@@ -21,16 +21,16 @@ def cube():
         [0, 3, 7, 4],
         [1, 2, 6, 5],
     ]
-    colors = [
-        [0, 0.3921, 0], [0, 0.3921, 0], [0, 0.3921, 0], [0, 0.3921, 0], [0.7,1,0], [0.7,1,0], [0.7,1,0], [0.7,1,0]
-    ]
+    
    
     glScale(1,1,1)
     glBegin(GL_QUADS)
+    c=0
     for face in faces:
-        for vertex in face:
-            glColor3fv(colors[vertex])
+        glColor3fv(colors[c])
+        for vertex in face: 
             glVertex3fv(vertices[vertex])
+        c+=1
     glEnd()
    
 
@@ -78,3 +78,27 @@ def sphere(radius, slices, stacks):
             glVertex3f(x * zr0, y * zr0, z0)
             glVertex3f(x*zr1, y*zr1, z1)
         glEnd()
+
+
+def quadrado(color:list):
+
+    vetor=[ [ 0 , 0 ],
+            [1, 0 ],
+            [1,1],
+            [ 0 ,1,]]
+    
+    glColor3f(*color)
+    glBegin(GL_QUADS)
+    for i in vetor:
+        glVertex2f(i[0],i[1]) 
+    glEnd()
+  
+def circulo(x,y,raio,segments,cor:list):
+    glColor3f(*cor)
+    glBegin(GL_TRIANGLE_FAN)
+    glVertex2f(x,y)
+    for i in range(segments+1):
+        angulo = 2 * np.pi * i / segments
+        glVertex2f(x + np.cos(angulo)*raio,y + np.sin(angulo) * raio)
+
+    glEnd()

@@ -8,7 +8,7 @@ def keyboard(window, key, scancode, action, mods):
     global angle
     if action == glfw.PRESS:
         if key == glfw.KEY_ENTER:
-            angle+=3
+            d_input()
 
 
 if not glfw.init():
@@ -33,24 +33,30 @@ glMatrixMode(GL_MODELVIEW)
 
 
 
-glClearColor(0 , 0.2, 0.5, 1)
+glClearColor(1, 1, 0.8, 1)
 
 
 
-p=planta(0,0,0)
+p=planta(-5,1,1.5)
+colors = [
+        [0, 1, 0], [1, 0, 0], [0, 0, 1], [0, 1, 1], [1,1,0], [1,0,1], [0,1,1], [0.7,1,0]
+    ]
+
 
 glfw.set_key_callback(window, key_callback)
+
 while not glfw.window_should_close(window):
     glfw.poll_events()
     process_input()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
     glLoadIdentity()
+
     camera()
-    glRotate(angle,0,1,0)
-    glTranslatef(0,0,0)
-    cube()
     
+
+    cenario()
+    glScalef(0.5,0.5,1)
+    p.desenha()
 
     glfw.swap_buffers(window)
 glfw.terminate()
