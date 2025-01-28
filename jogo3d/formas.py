@@ -1,6 +1,7 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 import numpy as np
+import math
 
 def cube(colors:list):
     vertices = [
@@ -59,7 +60,7 @@ def piramide():
     glEnd()
     
 
-def sphere(radius, slices, stacks):
+def sphere(radius, slices, stacks,cor=list):
     for i in range(stacks):
         lat0 = np.pi * (-0.5 + float(i) / stacks)
         z0 = radius * np.sin(lat0)
@@ -74,7 +75,7 @@ def sphere(radius, slices, stacks):
             lng = 2 * np.pi * float(j) /slices
             x = np.cos(lng)
             y = np.sin(lng)
-            glColor3f(0.1,0.4,0)
+            glColor3f(*cor)
             glVertex3f(x * zr0, y * zr0, z0)
             glVertex3f(x*zr1, y*zr1, z1)
         glEnd()
@@ -100,5 +101,14 @@ def circulo(x,y,raio,segments,cor:list):
     for i in range(segments+1):
         angulo = 2 * np.pi * i / segments
         glVertex2f(x + np.cos(angulo)*raio,y + np.sin(angulo) * raio)
-
     glEnd()
+
+def circle(radius,cor=list):
+        glColor3f(*cor)
+        glBegin(GL_TRIANGLE_FAN)
+        glVertex3f(0, 0, 0)  # Centro do círculo
+        for angle in range(361):
+            x = math.cos(math.radians(angle)) * radius
+            y = math.sin(math.radians(angle)) * radius
+            glVertex3f(x, y, 0)
+        glEnd()
