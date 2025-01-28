@@ -1,6 +1,7 @@
-from formas import *
+
 from OpenGL.GL import *
 from formas import *
+from planta3d import *
 
 class seleção:
     def __init__(self,x,y,z):
@@ -20,8 +21,6 @@ class seleção:
     def cordenadas(self):
         return self.x,self.y,self.z
     
-
-    
     def mudar(self,key):
         
         if key =="ParaEsquerda":
@@ -36,7 +35,21 @@ class seleção:
         if key == "ParaCima":
             if self.x < 15:
                 self.x+=1.2
-
+   
+    def mudarP(self,key):
+        
+        if key =="ParaCima":
+            if self.z > 0:
+                self.z-=1.2
+        if key =="ParaBaixo":
+            if self.z < 5:
+                self.z+=1.2
+        if key == "ParaEsquerda":
+            if self.x > -4:
+                self.x-=1.2
+        if key == "ParaDireita":
+            if self.x < 15:
+                self.x+=1.2
 
        
 class gramado:
@@ -95,35 +108,58 @@ def cenario():
     
 
 
-     
-def menu():
-    s=seleção(-4,-1,1.5)
+p=0
+
+opsoes=[quads([1,1,1]) for i in range(5)]
+ 
+
+def Menu():
+    global opsoes,p
     glPushMatrix()
-    glTranslatef(-4.5,-1.5,1)
-    glScalef(8.2,0,3)
+    glTranslatef(-4.5,2,1)
+    glScalef(8.2,3,3)
     quadrado([0,1,0.5])
     glPopMatrix()
-
+    opsoes[p].mudarCor([1,1,0])
     x=-4
-    y=-1
-    while(y<1):
-        while(x<3):
-            glPushMatrix()
-            glTranslatef(x,y,1.1)
-            quadrado([1,1,1])
-            glPopMatrix()
-            x+=1.5
-        x=-4
-        y+=1.2
-
-    s.desenha()
-
-def selector(direção:str):
-    global selecionador
+    y=3.5
+    c=0
+    while(x<3): 
+        glPushMatrix()
+        glTranslatef(x,y,1.1)
+        if c < len(opsoes):
+            opsoes[c].desenha()
+        glPopMatrix()
+        x+=1.5
+        c+=1
     
-    selecionador.mudar(direção)
+def selector_Menu(direção:str):
+    global p,opsoes
+    if direção == "ParaEsquerda":
+        if p > 0:
+            opsoes[p].mudarCor([1,1,1])
+            p-=1
+    if direção == "ParaDireita":
+        if p < 4:
+            opsoes[p].mudarCor([1,1,1])
+            p+=1
+            
+def get_selector_Menu()->int:
+    global p
+    return p
+
+def selector(direção:str,camera:bool):
+    global selecionador
+    if camera == False:
+        selecionador.mudarP(direção)
+    else:
+        selecionador.mudar(direção)
 
 
 def cordenadasDoSeletor():
     global selecionador
     return selecionador.cordenadas()
+
+
+
+

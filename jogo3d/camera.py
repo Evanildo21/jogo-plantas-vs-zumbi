@@ -12,7 +12,9 @@ rotation_index = False
 angle=0
 x,z=0,0
 
-
+def get_rotacao_camera():
+    global rotation_index
+    return rotation_index
 
 def camera():
     global rotation_index,angle,x,z

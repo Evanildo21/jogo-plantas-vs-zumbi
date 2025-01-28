@@ -1,31 +1,57 @@
 import glfw
-from planta3d import *
 from cenario import *
 from camera import *
 import time
-angle = 0
+
+menu=False
 
 
 def keyboard(window, key, scancode, action, mods):
-    global angle,plantas,girasol
+    global menu,plantas,girasol
+    rotacaoDaCamera=get_rotacao_camera()
     if action == glfw.PRESS:
-        if key == glfw.KEY_LEFT:
-            selector("ParaEsquerda")
-        if key == glfw.KEY_RIGHT:
-            selector("ParaDireita")
-        if key == glfw.KEY_UP:
-            selector("ParaCima")
-        if key ==glfw.KEY_DOWN:
-            selector("ParaBaixo")
+        if rotacaoDaCamera == True:
+
+                if key == glfw.KEY_LEFT:
+                    selector("ParaEsquerda",rotacaoDaCamera)
+                if key == glfw.KEY_RIGHT:
+                    selector("ParaDireita",rotacaoDaCamera)
+                if key == glfw.KEY_UP:
+                    selector("ParaCima",rotacaoDaCamera)
+                if key ==glfw.KEY_DOWN:
+                    selector("ParaBaixo",rotacaoDaCamera)
+        if rotacaoDaCamera == False:
+            if menu == False:
+                if key == glfw.KEY_LEFT:
+                    selector("ParaEsquerda",rotacaoDaCamera)
+                if key == glfw.KEY_RIGHT:
+                    selector("ParaDireita",rotacaoDaCamera)
+                if key == glfw.KEY_UP:
+                    selector("ParaCima",rotacaoDaCamera)
+                if key ==glfw.KEY_DOWN:
+                    selector("ParaBaixo",rotacaoDaCamera)
+            
+            if menu == True:
+                if key == glfw.KEY_LEFT:
+                    selector_Menu("ParaEsquerda")
+                if key == glfw.KEY_RIGHT:
+                    selector_Menu("ParaDireita") 
+            
+            if key == glfw.KEY_ENTER:
+                    if menu==False:
+                        menu=True
+                    else:
+                        num=get_selector_Menu()
+                        x,y,z=cordenadasDoSeletor()
+                        if num ==0:   
+                            plantas.append(Planta(x,y,z))
+                        if num == 1:
+                            girasol.append(Girasol(x,y,z))
+                        menu=False 
+
         if key == glfw.KEY_SPACE:
             process_input()
-        if key == glfw.KEY_ENTER:
-            x,y,z=cordenadasDoSeletor()
-            plantas.append(Planta(x,y,z))
-        if key == glfw.KEY_BACKSPACE:
-            x,y,z=cordenadasDoSeletor()
-            girasol.append(Girasol(x,y,z))
-        
+
     elif action == glfw.RELEASE: pass
 
 if not glfw.init():
@@ -65,6 +91,8 @@ while not glfw.window_should_close(window):
     
     camera()
     cenario()
+    if menu==True:
+        Menu()
     
     for planta in plantas:
         planta.desenhar()
@@ -89,11 +117,7 @@ while not glfw.window_should_close(window):
         
 
         tempo_anterior = tempo_atual
-        
-    
-
-
-     
+             
     glfw.swap_buffers(window)    
     time.sleep(1/60)
     glfw.poll_events()

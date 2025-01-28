@@ -81,6 +81,17 @@ def sphere(radius, slices, stacks,cor=list):
         glEnd()
 
 
+class quads:
+    def __init__(self,cor):
+        self.cor=cor
+        
+    def desenha(self):
+        quadrado(self.cor)
+
+    def mudarCor(self,cor):
+        self.cor=cor
+
+
 def quadrado(color:list):
 
     vetor=[ [ 0 , 0 ],
@@ -93,6 +104,10 @@ def quadrado(color:list):
     for i in vetor:
         glVertex2f(i[0],i[1]) 
     glEnd()
+
+
+
+
   
 def circulo(x,y,raio,segments,cor:list):
     glColor3f(*cor)
@@ -112,3 +127,5 @@ def circle(radius,cor=list):
             y = math.sin(math.radians(angle)) * radius
             glVertex3f(x, y, 0)
         glEnd()
+
+
