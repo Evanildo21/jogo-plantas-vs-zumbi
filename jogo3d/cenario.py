@@ -19,49 +19,49 @@ class seleção:
 
        
     def cordenadas(self):
-        return self.x,self.y,self.z
+        return self.x,self.y+0.3,self.z
     
     def mudar(self,key):
         
         if key =="ParaEsquerda":
             if self.z > 0:
-                self.z-=1.2
+                self.z-=1.1
         if key =="ParaDireita":
             if self.z < 5:
-                self.z+=1.2
+                self.z+=1.1
         if key == "ParaBaixo":
             if self.x > -4:
-                self.x-=1.2
+                self.x-=1.1
         if key == "ParaCima":
-            if self.x < 15:
-                self.x+=1.2
+            if self.x < 5.9:
+                self.x+=1.1
    
     def mudarP(self,key):
         
         if key =="ParaCima":
             if self.z > 0:
-                self.z-=1.2
+                self.z-=1.1
         if key =="ParaBaixo":
             if self.z < 5:
-                self.z+=1.2
+                self.z+=1.1
         if key == "ParaEsquerda":
             if self.x > -4:
-                self.x-=1.2
+                self.x-=1.1
         if key == "ParaDireita":
-            if self.x < 15:
-                self.x+=1.2
+            if self.x < 4.8:
+                self.x+=1.1
 
        
 class gramado:
-    def __init__(self,x,y):
+    def __init__(self,x,z):
         self.x= x
-        self.y= y
+        self.z= z
         self.color = [[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41]]
 
     def desenha(self):
         
         glPushMatrix()
-        glTranslatef(self.x, 0,self.y)
+        glTranslatef(self.x, 0,self.z)
         glScalef(1,0.1,1)
         cube(self.color)
         glPopMatrix()
@@ -88,24 +88,24 @@ def criar_cenario():
     glScalef(20,10,14)
     quadrado(cor[0])
     glPopMatrix()
+    
+
+def cenario():
+    criar_cenario()
     gramado1=[]
     x=-4
-    y=-1
+    z=-1
     for i in range(5):
         for j in range(9):
-            gramado1.append(gramado(x,y))
-            x=x+1.2
-        y=y+1.2
+            gramado1.append(gramado(x,z))
+            x=x+1.1
+        z=z+1.1
         x=-4
         
     for i in gramado1:
        i.desenha()
 
     selecionador.desenha()
-
-def cenario():
-    criar_cenario()
-    
 
 
 p=0
@@ -154,6 +154,7 @@ def selector(direção:str,camera:bool):
         selecionador.mudarP(direção)
     else:
         selecionador.mudar(direção)
+    
 
 
 def cordenadasDoSeletor():

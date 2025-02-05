@@ -2,6 +2,7 @@ from formas import *
 import random
  
 
+        
 class Planta:
     def __init__(self, x, y,z):
         """Inicializa uma planta na posição dada."""
@@ -15,19 +16,19 @@ class Planta:
     def desenhar(self):
         glPushMatrix()
         glTranslatef(self.x,self.y,self.z)
-        glScale(0.2,1,0.2)
+        glScale(0.2,0.5,0.2)
         cube(self.color)
         glPopMatrix()
         glPushMatrix()
 
-        glTranslatef(self.x+0.2,self.y+0.7,self.z)
+        glTranslatef(self.x+0.2,self.y+0.4,self.z)
         glRotatef(40,0,1,0)
         glScale(0.1,0.1,0.1)
         piramide()
         glPopMatrix()
 
         glPushMatrix()
-        glTranslatef(self.x,self.y+0.7,self.z)
+        glTranslatef(self.x,self.y+0.4,self.z)
         cor=[0.1,0.4,0]
         sphere(0.2,8,8,cor)
         glPopMatrix()
@@ -38,11 +39,13 @@ class Planta:
 
     def atualizar_projeteis(self):
         """Atualiza e desenha os projéteis."""
-        for proj in self.projeteis:
-            proj.mover()
-            proj.desenhar()
-        # Remove projéteis que saíram da tela
-        self.projeteis = [proj for proj in self.projeteis if proj.x < 12]
+        if len(self.projeteis):
+            for proj, i in zip(self.projeteis,range(len(self.projeteis))):
+                proj.mover()
+                proj.desenhar()
+                if proj.x >9:
+                    self.projeteis.pop(i)
+    
 
 
 class Projeteis:
@@ -69,6 +72,7 @@ class Projeteis:
         """Move o projétil para a direita."""
         self.x += self.velocidade
 
+
 class Girasol:
     def __init__(self, x, y,z):
         """Inicializa uma planta na posição dada."""
@@ -80,21 +84,21 @@ class Girasol:
         self.c=[1.0, 0.7, 0.0]
         self.listaDeSol=[]
 
-    def desenha(self):
+    def desenhar(self):
         glPushMatrix()
         glTranslatef(self.x,self.y,self.z)
-        glScalef(0.2,1,0.2)
+        glScalef(0.2,0.5,0.2)
         cube(self.color)
         glPopMatrix()
 
         glPushMatrix()
-        glTranslatef(self.x,self.y+0.7,self.z)
+        glTranslatef(self.x,self.y+0.4,self.z)
        
         sphere(0.2,8,8,self.marrom)
         glPopMatrix()
 
         glPushMatrix()
-        glTranslatef(self.x+0.1,self.y+0.7,self.z)
+        glTranslatef(self.x+0.1,self.y+0.4,self.z)
         glRotatef(20,0,0,1)
         glRotatef(90,0,1,0)
         self.petalas()
@@ -155,5 +159,71 @@ class Sol:
     
     def set_tempo(self,t):
         self.tempo-=t
+
+class planta_barreira:
+    def __init__(self, x, y,z):
+        """Inicializa uma planta na posição dada."""
+        self.x = x
+        self.y = y
+        self.z= z
+        self.color = [[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0]] # Verde
+        self.projeteis = []  # Lista de projéteis disparados
+        self.viva = True
+
+    def desenhar(self):
+        for i in range(1,9):
+            self.formar_barreira(i)
+
+    def formar_barreira(self,i):
+        if i == 1:
+            glPushMatrix()
+            glTranslatef(self.x,self.y,self.z)
+            glScalef(0.3,0.3,0.3)
+            cube(self.color)
+            glPopMatrix()
+        if i == 2:
+            glPushMatrix()
+            glTranslatef(self.x+0.3,self.y,self.z)
+            glScalef(0.3,0.3,0.3)
+            cube(self.color)
+            glPopMatrix()
+        if i == 3:
+            glPushMatrix()
+            glTranslatef(self.x+0.3,self.y,self.z+0.3)
+            glScalef(0.3,0.3,0.3)
+            cube(self.color)
+            glPopMatrix()
+        if i == 4:
+            glPushMatrix()
+            glTranslatef(self.x,self.y,self.z+0.3)
+            glScalef(0.3,0.3,0.3)
+            cube(self.color)
+            glPopMatrix()
+        if i == 5:
+            glPushMatrix()
+            glTranslatef(self.x,self.y+0.3,self.z)
+            glScalef(0.3,0.3,0.3)
+            cube(self.color)
+            glPopMatrix()
+        if i == 6:
+            glPushMatrix()
+            glTranslatef(self.x+0.3,self.y+0.3,self.z)
+            glScalef(0.3,0.3,0.3)
+            cube(self.color)
+            glPopMatrix()
+        if i == 7:
+            glPushMatrix()
+            glTranslatef(self.x+0.3,self.y+0.3,self.z+0.3)
+            glScalef(0.3,0.3,0.3)
+            cube(self.color)
+            glPopMatrix()
+        if i == 8:
+            glPushMatrix()
+            glTranslatef(self.x,self.y+0.3,self.z+0.3)
+            glScalef(0.3,0.3,0.3)
+            cube(self.color)
+            glPopMatrix()
+
+        
 
     
