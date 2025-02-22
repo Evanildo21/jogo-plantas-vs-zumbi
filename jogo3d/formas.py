@@ -71,7 +71,9 @@ def piramide():
     
 
 def sphere(radius, slices, stacks,cor=list):
+    cor.append(1)
     
+    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cor )  # Define cor da esfera
 
     for i in range(stacks):
         lat0 = np.pi * (-0.5 + float(i) / stacks)
@@ -81,15 +83,19 @@ def sphere(radius, slices, stacks,cor=list):
         lat1 = np.pi * (-0.5 + float(i + 1) / stacks)
         z1 = radius * np.sin(lat1)
         zr1 = radius * np.cos(lat1)
-        
+
         glBegin(GL_QUAD_STRIP)
-        glNormal3f(0,0,1)
-        for j in range(slices+1):
-            lng = 2 * np.pi * float(j) /slices
+        for j in range(slices + 1):
+            lng = 2 * np.pi * float(j) / slices
             x = np.cos(lng)
             y = np.sin(lng)
+
+            # Normal para iluminação correta
+            glNormal3f(x, y, z0)
             glVertex3f(x * zr0, y * zr0, z0)
-            glVertex3f(x*zr1, y*zr1, z1)
+
+            glNormal3f(x, y, z1)
+            glVertex3f(x * zr1, y * zr1, z1)
         glEnd()
 
 
@@ -131,20 +137,16 @@ def circulo(x,y,raio,segments,cor:list):
     glEnd()
 
 def circle(radius,cor=list):
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, cor)
-        glMaterialfv(GL_FRONT, GL_SPECULAR,cor)
-        glMaterialfv(GL_FRONT, GL_AMBIENT, cor)
-        glMaterialfv(GL_FRONT, GL_SHININESS, 100)
-        
+    cor.append(1)
+    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cor )  # Define cor do círculo
 
-        glBegin(GL_TRIANGLE_FAN)
-        glVertex3f(0, 0, 0)  # Centro do círculo
-        for angle in range(361):
+    glBegin(GL_TRIANGLE_FAN)
+    glNormal3f(0, 0, 1)  # Normal apontando para o eixo Z (iluminação correta)
+    glVertex3f(0, 0, 0)  # Centro do círculo
 
-            x = math.cos(math.radians(angle)) * radius
-            y = math.sin(math.radians(angle)) * radius
-            
-            glVertex3f(x, y, 0)
-        glEnd()
+    for angle in range(361):
+        x = math.cos(math.radians(angle)) * radius
+        y = math.sin(math.radians(angle)) * radius
+        glVertex3f(x, y, 0)
 
-
+    glEnd()

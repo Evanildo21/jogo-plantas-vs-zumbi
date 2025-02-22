@@ -37,7 +37,9 @@ class Camera:
             self.x+=1
             self.z-=1
         if self.angle < 90:
-            self.angle+=6.9
+            self.angle+=7
+        if self.x>=13 and self.z<(-13+0):
+          self.z+=1
         glTranslated(self.x,1,self.z)
         glRotatef(self.angle,0,1,0)
 

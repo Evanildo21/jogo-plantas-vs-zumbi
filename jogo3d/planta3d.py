@@ -13,6 +13,8 @@ class Planta:
         self.projeteis = []  # Lista de projéteis disparados
         self.viva = True
         self.controle=False
+        self.dano_sofrido=0
+        self.tipo='tiro'
 
     def desenhar(self):
         glPushMatrix()
@@ -30,8 +32,7 @@ class Planta:
 
         glPushMatrix()
         glTranslatef(self.x,self.y+0.4,self.z)
-        #cor=[0.1,0.4,0]
-        cor=[1,0,0]
+        cor=[0.1,0.4,0]
         sphere(0.2,8,8,cor)
         glPopMatrix()
         
@@ -50,6 +51,13 @@ class Planta:
                     self.projeteis.pop(i)
     def controlar(self):
         self.controle= not self.controle
+
+    def sofrer_dano(self,dano):
+        self.dano_sofrido+=dano
+        if self.dano_sofrido >= 5:
+            self.viva = False
+        return self.viva
+
     
 
 
@@ -60,7 +68,7 @@ class Projeteis:
         self.y = y
         self.z= z
         self.velocidade = 0.3
-        self.color = (0.0, 1.0, 0.3)  # Amarelo
+        self.color = [0.0, 1.0, 0.3]  # Amarelo
 
     def desenhar(self):
         """Desenha o projétil."""
@@ -92,10 +100,13 @@ class Girasol:
         self.x = x
         self.y = y
         self.z= z
-        self.color = [[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0]] # Verde
+        self.color = [0.0, 0.8, 0.0] # Verde
         self.marrom= [0.6, 0.4, 0.2]
         self.c=[1.0, 0.7, 0.0]
         self.listaDeSol=[]
+        self.dano_sofrido=0
+        self.viva = True
+        self.tipo='girasol'
 
     def desenhar(self):
         glPushMatrix()
@@ -116,6 +127,7 @@ class Girasol:
         glRotatef(90,0,1,0)
         self.petalas()
         glPopMatrix()
+        self.printSol()
 
     def petalas(self):
         num_petals = 20
@@ -128,6 +140,12 @@ class Girasol:
             
             circle(petal_radius,self.c )  # Amarelo para as pétalas
             glPopMatrix()
+
+    def sofrer_dano(self,dano):
+        self.dano_sofrido+=dano
+        if self.dano_sofrido >= 5:
+            self.viva = False
+        return self.viva
     
     def absorverLuzDoSol(self):
         if self.c[1]>=1:
@@ -179,12 +197,15 @@ class planta_barreira:
         self.x = x
         self.y = y
         self.z= z
-        self.color = [[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0]] # Verde
+        self.color = [0.0, 0.8, 0.0] # Verde
         self.projeteis = []  # Lista de projéteis disparados
         self.viva = True
+        self.dano_reserva=0
+        self.dano_sofrido=0
+        self.tipo='barreira'
 
     def desenhar(self):
-        for i in range(1,9):
+        for i in range(1,9-int(self.dano_reserva)):
             self.formar_barreira(i)
 
     def formar_barreira(self,i):
@@ -196,19 +217,19 @@ class planta_barreira:
             glPopMatrix()
         if i == 2:
             glPushMatrix()
-            glTranslatef(self.x+0.3,self.y,self.z)
+            glTranslatef(self.x-0.3,self.y,self.z)
             glScalef(0.3,0.3,0.3)
             cube(self.color)
             glPopMatrix()
         if i == 3:
             glPushMatrix()
-            glTranslatef(self.x+0.3,self.y,self.z+0.3)
+            glTranslatef(self.x-0.3,self.y,self.z-0.3)
             glScalef(0.3,0.3,0.3)
             cube(self.color)
             glPopMatrix()
         if i == 4:
             glPushMatrix()
-            glTranslatef(self.x,self.y,self.z+0.3)
+            glTranslatef(self.x,self.y,self.z-0.3)
             glScalef(0.3,0.3,0.3)
             cube(self.color)
             glPopMatrix()
@@ -220,23 +241,30 @@ class planta_barreira:
             glPopMatrix()
         if i == 6:
             glPushMatrix()
-            glTranslatef(self.x+0.3,self.y+0.3,self.z)
+            glTranslatef(self.x-0.3,self.y+0.3,self.z)
             glScalef(0.3,0.3,0.3)
             cube(self.color)
             glPopMatrix()
         if i == 7:
             glPushMatrix()
-            glTranslatef(self.x+0.3,self.y+0.3,self.z+0.3)
+            glTranslatef(self.x-0.3,self.y+0.3,self.z-0.3)
             glScalef(0.3,0.3,0.3)
             cube(self.color)
             glPopMatrix()
         if i == 8:
             glPushMatrix()
-            glTranslatef(self.x,self.y+0.3,self.z+0.3)
+            glTranslatef(self.x,self.y+0.3,self.z-0.3)
             glScalef(0.3,0.3,0.3)
             cube(self.color)
             glPopMatrix()
 
+    def sofrer_dano(self,dano):
+        self.dano_sofrido+=dano
+        if self.dano_sofrido >= 5:
+            self.dano_reserva+=dano
+            if self.dano_reserva >= 5:
+                self.viva = False
+        return self.viva
         
 
     

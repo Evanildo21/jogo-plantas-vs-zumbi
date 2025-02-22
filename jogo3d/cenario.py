@@ -3,12 +3,13 @@ from OpenGL.GL import *
 from formas import *
 from planta3d import *
 
+plantas={}
 class seleção:
-    def __init__(self,x,y,z):
+    def __init__(self,x,y,z,cor=[1.0, 1.0, 0]):
         self.x= x
         self.y= y
         self.z=z
-        self.color = [[1, 1, 0],[1, 1, 0],[1, 1, 0],[1, 1, 0],[1, 1, 0],[1, 1, 0],[1, 1, 0],[1, 1, 0]]
+        self.color = cor
       
     def desenha(self):   
         glPushMatrix()
@@ -68,7 +69,7 @@ class gramado:
 
     
 selecionador=seleção(-4,0.1,-1)
-selecionador_disparo=seleção(13,0.1,-1)
+selecionador_disparo=seleção(4.8,0.1,-1,[0.8,0,0])
 atak=False
 
 def modo_de_atack():
@@ -173,6 +174,16 @@ def cordenadasDoSeletor(x):
     else:
         return selecionador_disparo.cordenadas()
 
+def chave(x,y,z)->float:
+    return  x*z
 
+def atacar_planta(x:float,atack):
+    global plantas
+    status = plantas[x].sofrer_dano(atack)
+    if not status:
+        plantas.pop(x)
 
+def plantas_do_cenario()->dict:
+        global plantas
+        return plantas
 

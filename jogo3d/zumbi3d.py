@@ -1,5 +1,6 @@
 from OpenGL.GL import *
 from formas import *
+from cenario import *
 
 class Zumbi:
     def desenhar(self):
@@ -47,7 +48,7 @@ class Zumbi_normal(Zumbi):
             if len(planta):
                 auvo=self.planta_no_mesmo_eixo_x(planta)
                 if auvo and self.verificar_colisao_Planta(auvo):
-                        pass   
+                    self.atacar(auvo)       
                 else:
                     self.x -= self.velocidade
             else:
@@ -56,7 +57,6 @@ class Zumbi_normal(Zumbi):
     def planta_no_mesmo_eixo_x(self, plantas):
         lista=[]
         for i in plantas:
-            
             if int(i.z) == int(self.z):  
                 lista.append(i)
         if len(lista):
@@ -64,6 +64,9 @@ class Zumbi_normal(Zumbi):
         else: 
             return None
         
+    def atacar(self,auvo):
+        atack =0.05
+        atacar_planta(chave(auvo.x,auvo.y,auvo.z),atack)
 
     def verificar_colisao_casa(self):
         pass
