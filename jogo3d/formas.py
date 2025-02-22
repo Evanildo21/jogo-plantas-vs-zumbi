@@ -3,35 +3,45 @@ from OpenGL.GLU import *
 import numpy as np
 import math
 
-def cube(colors:list):
+def cube(color:list):
     vertices = [
-        [-0.5, -0.5, -0.5],
-        [0.5, -0.5, -0.5],
-        [0.5, 0.5, -0.5],
-        [-0.5, 0.5, -0.5],
-        [-0.5, -0.5, 0.5],
-        [0.5, -0.5, 0.5],
-        [0.5, 0.5, 0.5],
-        [-0.5, 0.5, 0.5],
-    ]
+            [-0.5, -0.5, -0.5],
+            [0.5, -0.5, -0.5],
+            [0.5, 0.5, -0.5],
+            [-0.5, 0.5, -0.5],
+            [-0.5, -0.5, 0.5],
+            [0.5, -0.5, 0.5],
+            [0.5, 0.5, 0.5],
+            [-0.5, 0.5, 0.5],
+        ]
     faces = [
-        [0, 1, 2, 3],
-        [4, 5, 6, 7],
-        [0, 1, 5, 4],
-        [2, 3, 7, 6],
-        [0, 3, 7, 4],
-        [1, 2, 6, 5],
-    ]
+            [0, 1, 2, 3], # front
+            [1, 5, 6, 2], # dir
+            [5, 4, 7, 6], # tras
+            [4, 0, 3, 7], # esq
+            [3, 2, 6, 7], # sup
+            [4, 5, 1, 0], # inf
+        ]
+
+    normais = [
+            [0, 0, -1],
+            [1, 0, 0],
+            [0, 0, 1],
+            [-1, 0, 0],
+            [0, 1, 0],
+            [0, -1, 0]
+        ]
     
-   
-    glScale(1,1,1)
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+    glMaterialfv(GL_FRONT, GL_SPECULAR,color)
+    glMaterialfv(GL_FRONT, GL_AMBIENT, color)
+    glMaterialfv(GL_FRONT, GL_SHININESS, 100)
+    
     glBegin(GL_QUADS)
-    c=0
-    for face in faces:
-        glColor3fv(colors[c])
-        for vertex in face: 
+    for i, face in enumerate(faces):
+        glNormal3fv(normais[i])
+        for vertex in face:
             glVertex3fv(vertices[vertex])
-        c+=1
     glEnd()
    
 
@@ -61,6 +71,8 @@ def piramide():
     
 
 def sphere(radius, slices, stacks,cor=list):
+    
+
     for i in range(stacks):
         lat0 = np.pi * (-0.5 + float(i) / stacks)
         z0 = radius * np.sin(lat0)
@@ -69,13 +81,13 @@ def sphere(radius, slices, stacks,cor=list):
         lat1 = np.pi * (-0.5 + float(i + 1) / stacks)
         z1 = radius * np.sin(lat1)
         zr1 = radius * np.cos(lat1)
-
+        
         glBegin(GL_QUAD_STRIP)
+        glNormal3f(0,0,1)
         for j in range(slices+1):
             lng = 2 * np.pi * float(j) /slices
             x = np.cos(lng)
             y = np.sin(lng)
-            glColor3f(*cor)
             glVertex3f(x * zr0, y * zr0, z0)
             glVertex3f(x*zr1, y*zr1, z1)
         glEnd()
@@ -119,12 +131,19 @@ def circulo(x,y,raio,segments,cor:list):
     glEnd()
 
 def circle(radius,cor=list):
-        glColor3f(*cor)
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, cor)
+        glMaterialfv(GL_FRONT, GL_SPECULAR,cor)
+        glMaterialfv(GL_FRONT, GL_AMBIENT, cor)
+        glMaterialfv(GL_FRONT, GL_SHININESS, 100)
+        
+
         glBegin(GL_TRIANGLE_FAN)
         glVertex3f(0, 0, 0)  # Centro do círculo
         for angle in range(361):
+
             x = math.cos(math.radians(angle)) * radius
             y = math.sin(math.radians(angle)) * radius
+            
             glVertex3f(x, y, 0)
         glEnd()
 

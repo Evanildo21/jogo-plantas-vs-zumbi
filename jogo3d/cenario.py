@@ -68,6 +68,12 @@ class gramado:
 
     
 selecionador=seleção(-4,0.1,-1)
+selecionador_disparo=seleção(13,0.1,-1)
+atak=False
+
+def modo_de_atack():
+    global atak
+    atak= not atak
 
 def criar_cenario():
     cor=[[0.18,0.55,0.34],[0.53,0.81,0.92],[1,1,0]]
@@ -106,6 +112,8 @@ def cenario():
        i.desenha()
 
     selecionador.desenha()
+    if atak:
+        selecionador_disparo.desenha()
 
 
 p=0
@@ -148,18 +156,22 @@ def get_selector_Menu()->int:
     global p
     return p
 
-def selector(direção:str,camera:bool):
-    global selecionador
+def selector(direção:str,camera:bool,x):
+    global selecionador,selecionador_disparo
     if camera == False:
         selecionador.mudarP(direção)
     else:
-        selecionador.mudar(direção)
-    
+        if x==False:
+            selecionador.mudar(direção)
+        else:
+            selecionador_disparo.mudar(direção) 
 
-
-def cordenadasDoSeletor():
-    global selecionador
-    return selecionador.cordenadas()
+def cordenadasDoSeletor(x):
+    global selecionador,selecionador_disparo
+    if x==1:
+        return selecionador.cordenadas()
+    else:
+        return selecionador_disparo.cordenadas()
 
 
 

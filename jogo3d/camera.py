@@ -5,68 +5,56 @@ import numpy as np
 
 
 
-
-keys = {}
-
-rotation_index = False
-angle=0
-x,z=0,0
-
-def get_rotacao_camera():
-    global rotation_index
-    return rotation_index
-
-def camera():
-    global rotation_index,angle,x,z
-    vetor=[[1, 3.5, 14],
-           [0, 0, -1.0],
-           [0.0, 1.0, 0.0]]
-    c=[x + y for x,y in zip(vetor[0],vetor[1])]
-    if rotation_index == True:
-        d_input()
-    else:
-        if angle != 0 or x != 0:
-            
-            volta_input()
-
-    gluLookAt(vetor[0][0],vetor[0][1],vetor[0][2],c[0],c[1],c[2],vetor[2][0],vetor[2][1],vetor[2][2])
-
-
-def d_input():
-    global x,z,angle
-    if x<13:
-        x+=1
-        z-=1
-    if angle < 90:
-        angle+=6.9
-    glTranslated(x,1,z)
-    glRotatef(angle,0,1,0)
-
-
-def volta_input():
-    global x,z,angle
-    if x != 0:
-        x-=1
-    if z != -1:
-        z+=1
-    if angle >6.9:
-        angle-=6.9
+class Camera:
+    def __init__(self):
+        self.rotation_index = False
+        self.angle=0
+        self.x=0
+        self.z=0
+    def get_rotacao_camera(self):
+        return self.rotation_index
     
-    glTranslated(x,0.1,z)
-    glRotatef(angle,0,1,0)
+    def exibir_camera(self):
+        
+        vetor=[ [ 1 ,3.5, 14 ],
+                [ 0 , 0 ,-1.0],
+                [0.0,1.0, 0.0]]
+        
+        c=[x + y for x,y in zip(vetor[0],vetor[1])]
+        
+        if self.rotation_index == True:
+            self.d_input()
+        else:
+            if self.angle != 0 or self.x != 0:
+                self.volta_input()
+
+        gluLookAt(vetor[0][0],vetor[0][1],vetor[0][2],c[0],c[1],c[2],vetor[2][0],vetor[2][1],vetor[2][2])
+
+
+    def d_input(self):
+        
+        if self.x<13:
+            self.x+=1
+            self.z-=1
+        if self.angle < 90:
+            self.angle+=6.9
+        glTranslated(self.x,1,self.z)
+        glRotatef(self.angle,0,1,0)
+
+
+    def volta_input(self):
+        
+        if self.x != 0:
+            self.x-=1
+        if self.z != -1:
+            self.z+=1
+        if self.angle >6.9:
+            self.angle-=6.9
+        
+        glTranslated(self.x,0.1,self.z)
+        glRotatef(self.angle,0,1,0)
+        
     
-    
-
-
-
-
-
-
-
-def process_input():
-    global rotation_index
-    if rotation_index == True:
-        rotation_index = False
-    else:   
-        rotation_index = True
+    def process_input(self):
+        self.rotation_index = not self.rotation_index
         

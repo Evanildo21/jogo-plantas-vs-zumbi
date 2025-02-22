@@ -9,9 +9,10 @@ class Planta:
         self.x = x
         self.y = y
         self.z= z
-        self.color = [[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0],[0.0, 0.8, 0.0]] # Verde
+        self.color = [0.0, 0.8, 0.0] # Verde
         self.projeteis = []  # Lista de projéteis disparados
         self.viva = True
+        self.controle=False
 
     def desenhar(self):
         glPushMatrix()
@@ -29,7 +30,8 @@ class Planta:
 
         glPushMatrix()
         glTranslatef(self.x,self.y+0.4,self.z)
-        cor=[0.1,0.4,0]
+        #cor=[0.1,0.4,0]
+        cor=[1,0,0]
         sphere(0.2,8,8,cor)
         glPopMatrix()
         
@@ -37,14 +39,17 @@ class Planta:
         """Dispara um projétil."""
         self.projeteis.append(Projeteis(self.x+0.3, self.y+0.7 ,self.z ))
 
-    def atualizar_projeteis(self):
+    def atualizar_projeteis(self,cordenadas=(0,0,0)):
         """Atualiza e desenha os projéteis."""
+        x,y,z=cordenadas
         if len(self.projeteis):
             for proj, i in zip(self.projeteis,range(len(self.projeteis))):
-                proj.mover()
+                proj.mover(self.controle,x,z)
                 proj.desenhar()
                 if proj.x >9:
                     self.projeteis.pop(i)
+    def controlar(self):
+        self.controle= not self.controle
     
 
 
@@ -68,9 +73,17 @@ class Projeteis:
 
         glPopMatrix()
 
-    def mover(self):
+    def mover(self,controle,x,z):
         """Move o projétil para a direita."""
-        self.x += self.velocidade
+        if controle:
+            self.x += self.velocidade
+            if z > self.z:
+                self.z += self.velocidade
+            else:
+                self.z -= self.velocidade
+            
+        else:
+            self.x += self.velocidade
 
 
 class Girasol:
