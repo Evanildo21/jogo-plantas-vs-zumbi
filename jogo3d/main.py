@@ -2,6 +2,7 @@ import glfw
 from camera import *
 from iluminacao import iluminacao
 from jogo3d import *
+from cenario import *
 
 menu = False
 
@@ -37,6 +38,8 @@ def keyboard(window, key, scancode, action, mods):
                         menu=False 
 
         if key == glfw.KEY_SPACE:
+            if menu == True:
+                menu =False
             cam.process_input()
 
     elif action == glfw.RELEASE: pass 
@@ -65,20 +68,24 @@ glMatrixMode(GL_MODELVIEW)
 
 glClearColor(1, 1, 0.8, 1)
 
+carregar_menu()
 luz = iluminacao()
 cam=Camera()
 
+jogo=False
 
-while not glfw.window_should_close(window):
+while not glfw.window_should_close(window) and  not jogo:
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
     cam.exibir_camera()
     cenario()
-    luz.configurar_luz_potual(GL_LIGHT1, [1, 6, -1], [1, 1, 1], 0.5)
+    
     if menu==True:
         Menu()
+        luz.configurar_luz_direcional(GL_LIGHT2, [-1, 9, 7], [1.0, 1.0, 1.0], 1)
 
-    acao()
+    jogo=acao()
+  
 
              
     glfw.swap_buffers(window)    

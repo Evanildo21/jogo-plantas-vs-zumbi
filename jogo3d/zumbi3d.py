@@ -11,6 +11,9 @@ class Zumbi:
             glScalef(0.3,1,0.3)
             cube(self.color)
             glPopMatrix()
+            return True
+        else:
+            return False
 
     def verificar_colisao_Projeteis(self, projeteis):
         """Verifica se algum projétil colidiu com o zumbi."""
@@ -68,8 +71,7 @@ class Zumbi_normal(Zumbi):
         atack =0.05
         atacar_planta(chave(auvo.x,auvo.y,auvo.z),atack)
 
-    def verificar_colisao_casa(self):
-        pass
+   
             
     def get_x(self):
         return self.x
@@ -99,30 +101,3 @@ class Zumbi_inteligente(Zumbi):
                 self.x-=self.velocidade
 
     
-class Zumbi_desvio(Zumbi):
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.color = [[0.8, 0.0, 0.0]]*6  # Vermelho
-        self.velocidade = 0.05
-        self.vivo = True
-        self.dano_sofrido = 0
-    
-    def mover(self, plantas):
-        if self.vivo:
-            alvo = self.encontrar_planta_mais_proxima(plantas)
-            if alvo:
-                if self.verificar_colisao(alvo):
-                    self.desviar()
-                else:
-                    dx = alvo.x - self.x
-                    dz = alvo.z - self.z
-                    distancia = (dx**2 + dz**2) ** 0.5
-                    if distancia > 0:
-                        self.x += self.velocidade * (dx / distancia)
-                        self.z += self.velocidade * (dz / distancia)
-
-    def desviar(self):
-        self.x += self.velocidade * (-1 if self.x % 2 == 0 else 1)
-        self.z += self.velocidade * (-1 if self.z % 2 == 0 else 1)

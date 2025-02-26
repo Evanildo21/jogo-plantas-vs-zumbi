@@ -2,14 +2,18 @@
 from OpenGL.GL import *
 from formas import *
 from planta3d import *
+from camera import *
+
 
 plantas={}
+
 class seleção:
     def __init__(self,x,y,z,cor=[1.0, 1.0, 0]):
         self.x= x
         self.y= y
         self.z=z
         self.color = cor
+        self.coluna=1
       
     def desenha(self):   
         glPushMatrix()
@@ -27,15 +31,21 @@ class seleção:
         if key =="ParaEsquerda":
             if self.z > 0:
                 self.z-=1.1
+                
         if key =="ParaDireita":
-            if self.z < 5:
+            if self.z < 3:
                 self.z+=1.1
+                
         if key == "ParaBaixo":
             if self.x > -4:
                 self.x-=1.1
+                self.coluna-=1
         if key == "ParaCima":
-            if self.x < 5.9:
+            if self.x < 4:
                 self.x+=1.1
+                self.coluna+=1
+                
+                
    
     def mudarP(self,key):
         
@@ -43,29 +53,42 @@ class seleção:
             if self.z > 0:
                 self.z-=1.1
         if key =="ParaBaixo":
-            if self.z < 5:
+            if self.z < 3:
                 self.z+=1.1
         if key == "ParaEsquerda":
             if self.x > -4:
                 self.x-=1.1
+                self.coluna-=1
+                
         if key == "ParaDireita":
-            if self.x < 4.8:
+            if self.x < 4:
                 self.x+=1.1
+                self.coluna+=1
+                
 
-       
-class gramado:
+
+class Gramado:
     def __init__(self,x,z):
         self.x= x
         self.z= z
-        self.color = [[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41],[0.81, 0.6, 0.41]]
-
-    def desenha(self):
+        here = os.path.dirname(os.path.abspath(__file__))
+        if not hasattr(gramado, 'texturagrama'): 
+            self.texturagrama = load_texture(os.path.join(here, 'grama.png'))
+           # self.texturasolo = load_texture(os.path.join(here,"c:/Users/POSITIVO/Documents/computação grafica/cg/jogo plantas vs zumbi/jogo3d/soloplantavszumbies.jpg" ))
         
+    def desenha(self):
+    
         glPushMatrix()
-        glTranslatef(self.x, 0,self.z)
-        glScalef(1,0.1,1)
-        cube(self.color)
+        glTranslatef(self.x, 0, self.z)
+        glScalef(1, 0.1, 1)
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.texturagrama)
+        cube_texture(self.texturagrama)
+        glBindTexture(GL_TEXTURE_2D, 0)
+        glDisable(GL_TEXTURE_2D)
         glPopMatrix()
+
+        
 
     
 selecionador=seleção(-4,0.1,-1)
@@ -73,43 +96,19 @@ selecionador_disparo=seleção(4.8,0.1,-1,[0.8,0,0])
 atak=False
 
 def modo_de_atack():
-    global atak
+    global atak,aproxima
     atak= not atak
-
-def criar_cenario():
-    cor=[[0.18,0.55,0.34],[0.53,0.81,0.92],[1,1,0]]
-    glPushMatrix()
-    glTranslatef(0,5,-1.9)
-    circulo(0,0,1,40,cor[2])
-    glPopMatrix()
-
-    glPushMatrix()
-    glTranslatef(-9,0.3,-2)
-    glScalef(20,10,0)
-    quadrado(cor[1])
-    glPopMatrix()
-
-    glPushMatrix()
-    glTranslatef(-9,0,5)
-    glRotatef(270,1,0,0)
-    glScalef(20,10,14)
-    quadrado(cor[0])
-    glPopMatrix()
-    
+    if atak:
+        aproximacao(coluna_do_seletor())
+    else :
+        aproximacao(0)
 
 def cenario():
-    criar_cenario()
-    gramado1=[]
-    x=-4
-    z=-1
-    for i in range(5):
-        for j in range(9):
-            gramado1.append(gramado(x,z))
-            x=x+1.1
-        z=z+1.1
-        x=-4
-        
-    for i in gramado1:
+    global gramado,mundo
+    
+    mundo.draw(0,11,0)
+
+    for i in gramado:
        i.desenha()
 
     selecionador.desenha()
@@ -118,12 +117,31 @@ def cenario():
 
 
 p=0
+opsoes=[]
+mundo=None
+gramado=[]
+def carregar_menu():
+    global opsoes,mundo,gramado
+    mundo=cubo_cenario("cemiterio.png")
+    opsoes.append(Quads("tiro.png") )
+    opsoes.append(Quads("girasol.png") )
+    opsoes.append(Quads("b.png") )
+   
+    x=-4
+    z=-1
+    for i in range(5):
+        for j in range(9):
+            gramado.append(Gramado(x,z))
+            x=x+1.1
+        z=z+1.1
+        x=-4
+    
+   
 
-opsoes=[quads([1,1,1]) for i in range(5)]
- 
+
 
 def Menu():
-    global opsoes,p
+    global opsoes
     glPushMatrix()
     glTranslatef(-4.5,2,1)
     glScalef(8.2,3,3)
@@ -133,6 +151,7 @@ def Menu():
     x=-4
     y=3.5
     c=0
+  
     while(x<3): 
         glPushMatrix()
         glTranslatef(x,y,1.1)
@@ -149,7 +168,7 @@ def selector_Menu(direção:str):
             opsoes[p].mudarCor([1,1,1])
             p-=1
     if direção == "ParaDireita":
-        if p < 4:
+        if p < 2:
             opsoes[p].mudarCor([1,1,1])
             p+=1
             
@@ -173,6 +192,10 @@ def cordenadasDoSeletor(x):
         return selecionador.cordenadas()
     else:
         return selecionador_disparo.cordenadas()
+    
+def coluna_do_seletor():
+    global selecionador
+    return selecionador.coluna
 
 def chave(x,y,z)->float:
     return  x*z
@@ -180,6 +203,7 @@ def chave(x,y,z)->float:
 def atacar_planta(x:float,atack):
     global plantas
     status = plantas[x].sofrer_dano(atack)
+    
     if not status:
         plantas.pop(x)
 

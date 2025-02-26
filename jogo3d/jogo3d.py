@@ -9,15 +9,24 @@ seletor=False
 tempo_inteligente=0
 tempo_de_criar_zumbi = tempo_anterior = time.time()
 zumbis = []
+zumbis_mortos=0
 posicaoz=[-1,0.1,1.2,2.3,3.3]
 i = int(random.uniform(0,4))
 zumbis.append(Zumbi_normal(10,0.6,posicaoz[i]))
 
 def acao():
-    global plantas,zumbis,tempo_inteligente,tempo_de_criar_zumbi,tempo_anterior,posicaoz
+    global plantas,zumbis,tempo_inteligente,tempo_de_criar_zumbi,tempo_anterior,posicaoz,zumbis_mortos
+    glPushAttrib(GL_ENABLE_BIT)  # Salva o estado atual do OpenGL
 
-    for zumbi in zumbis:
-        zumbi.desenhar()
+    glEnable(GL_CULL_FACE)
+    glCullFace(GL_FRONT)  
+    
+    for i,zumbi in enumerate(zumbis):
+        if not zumbi.desenhar():
+            zumbis.pop(i)
+            zumbis_mortos+=1
+
+
         for _,planta in plantas.items():
             if planta.tipo == 'tiro':
                 zumbi.verificar_colisao_Projeteis(planta.projeteis)
@@ -49,7 +58,7 @@ def acao():
         tempo_anterior = tempo_atual
 
     
-    if tempo_atual - tempo_de_criar_zumbi > 6:
+    if tempo_atual - tempo_de_criar_zumbi > 10:
         i = int(random.uniform(0,4))
         zumbis.append(Zumbi_normal(10,0.6,posicaoz[i]))
         tempo_de_criar_zumbi = tempo_atual
@@ -59,6 +68,18 @@ def acao():
         i = int(random.uniform(0,4))
         zumbis.append(Zumbi_inteligente(10,0.6,posicaoz[i]))
         tempo_inteligente=0
+
+    glPopAttrib()  # Restaura o estado anterior do OpenGL
+
+    zumbiMaisProximo = zumbi_mais_proximo_da_casa(zumbis)
+
+    if zumbis_mortos == 5:
+        return True
+    
+    if zumbiMaisProximo.x < -5:
+        return True
+    else:
+        return False
 
 def adicionar_plantas():
     global plantas
@@ -83,6 +104,13 @@ def controle_de_planta():
             return True
     return False
 
+
+def zumbi_mais_proximo_da_casa( zumbi):
+        if len(zumbi):
+            return min(zumbi, key=lambda p:p.x)
+        else: 
+            return None
+        
 
 
 

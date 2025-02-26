@@ -4,6 +4,7 @@ from OpenGL.GLU import *
 import numpy as np
 
 
+aproxima=0
 
 class Camera:
     def __init__(self):
@@ -32,14 +33,16 @@ class Camera:
 
 
     def d_input(self):
-        
+        global aproxima
+       
         if self.x<13:
             self.x+=1
             self.z-=1
         if self.angle < 90:
             self.angle+=7
-        if self.x>=13 and self.z<(-13+0):
+        if self.x>=13 and self.z<(-13+aproxima):
           self.z+=1
+
         glTranslated(self.x,1,self.z)
         glRotatef(self.angle,0,1,0)
 
@@ -59,4 +62,8 @@ class Camera:
     
     def process_input(self):
         self.rotation_index = not self.rotation_index
-        
+    
+def aproximacao(x):
+    global aproxima
+    aproxima = x
+    
